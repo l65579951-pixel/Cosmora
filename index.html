@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Destacado Personalizable - Moon Hub</title>
+    
+    <!-- 1. AQUÍ VAN TUS ESTILOS CSS -->
+    <style>
+        body {
+            margin: 0;
+            padding: 10px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* Camuflaje invisible para Notion Modo Claro: elimina marcos externos feos */
+            background-color: #ffffff; 
+        }
+
+        /* EL CONTENEDOR PRINCIPAL */
+        .callout-gyaru {
+            background-color: #FFD1DC; /* Rosa pastel por defecto si no hay foto */
+            background-size: cover;
+            background-position: center;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            transition: background 0.3s ease;
+        }
+
+        /* LA CAJA EDITABLE */
+        .texto-editable {
+            background: rgba(255, 255, 255, 0.85); 
+            border-radius: 8px;
+            padding: 15px;
+            color: #4A2E2B;
+            font-size: 16px;
+            font-weight: 500;
+            outline: none;
+            border: 1px solid rgba(255, 182, 193, 0.5);
+        }
+
+        /* BARRA INFERIOR */
+        .barra-inferior {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .redes {
+            display: flex;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .redes a, .btn-cambiar-fondo {
+            color: #ff69b4;
+            text-decoration: none;
+            background: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-cambiar-fondo {
+            color: #555;
+            background: #f0f0f0;
+        }
+        
+        .btn-cambiar-fondo:hover {
+            background: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 2. AQUÍ VA TU ESTRUCTURA HTML (Actualizado para el Pack Moon) -->
+    <div class="callout-gyaru" id="contenedorCallout">
+        
+        <!-- El cuadro editable para escribir -->
+        <div class="texto-editable" contenteditable="true" id="miTexto">
+            🎀 <b>¡Bienvenida/o a tu Moon Hub!</b> 💘<br><br>
+            ¡Hola, preciosa! Soy Lucy, creadora de Cosmora. Oficialmente diste el primer paso para conectar con tu mejor versión. Diseñé este espacio extendido para que no solo organices tu belleza, sino para que transformes tus hábitos y brilles desde adentro hacia afuera de la forma más linda y <i>aesthetic</i> posible. ¡A romperla con ese Glow-Up! ⚡💅
+        </div>
+        
+        <!-- Contenedor para los botones inferiores -->
+        <div class="barra-inferior">
+            <div class="redes">
+                <a href="https://instagram.com/cosmora.cloud" target="_blank">📸 ig: @cosmora.cloud</a>
+                <a href="https://tiktok.com/@cosmora.nube" target="_blank">🎵 tiktok: @cosmora.nube</a>
+            </div>
+            
+            <!-- BOTÓN PARA CAMBIAR FONDO -->
+            <label class="btn-cambiar-fondo">
+                🖼️ Cambiar Fondo
+                <input type="file" id="subirFondo" accept="image/*" style="display: none;">
+            </label>
+        </div>
+    </div>
+
+    <!-- 3. AQUÍ VA TU LÓGICA JAVASCRIPT (Ya arreglada y sin errores) -->
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            const botonSubir = document.getElementById('subirFondo');
+            const contenedor = document.getElementById('contenedorCallout');
+
+            if (botonSubir && contenedor) {
+                botonSubir.addEventListener('change', function(e) {
+                    const archivo = e.target.files[0];
+                    
+                    if (archivo) {
+                        // Validación para asegurarse de que sea una foto
+                        if (!archivo.type.startsWith('image/')) {
+                            alert('Por favor, selecciona un archivo de imagen válido (.jpg, .png, .gif)');
+                            return;
+                        }
+
+                        const lector = new FileReader();
+                        lector.onload = function(event) {
+                            // Aplicamos el fondo con prioridad alta para integrarse fluido
+                            contenedor.style.setProperty('background-image', `url('${event.target.result}')`, 'important');
+                            console.log("¡Fondo de Cosmora cambiado con éxito!");
+                        };
+                        
+                        lector.readAsDataURL(archivo);
+                    }
+                });
+            } else {
+                console.error("No se encontraron los elementos en el HTML. Revisa los IDs.");
+            }
+        });
+    </script>
+
+</body>
+</html>
