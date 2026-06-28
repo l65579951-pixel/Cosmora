@@ -4,14 +4,15 @@
     <meta charset="UTF-8">
     <title>Destacado Personalizable - Moon Hub</title>
     
-    <!-- 1. AQUÍ VAN TUS ESTILOS CSS -->
+    <!-- 1. ESTILOS CSS CON MODO OSCURO AUTOMÁTICO -->
     <style>
         body {
             margin: 0;
             padding: 10px;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* Camuflaje invisible para Notion Modo Claro: elimina marcos externos feos */
+            /* Camuflaje por defecto para Notion Modo Claro */
             background-color: #ffffff; 
+            transition: background-color 0.3s ease;
         }
 
         /* EL CONTENEDOR PRINCIPAL */
@@ -38,6 +39,7 @@
             font-weight: 500;
             outline: none;
             border: 1px solid rgba(255, 182, 193, 0.5);
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         /* BARRA INFERIOR */
@@ -66,6 +68,7 @@
             font-size: 13px;
             cursor: pointer;
             font-weight: bold;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         .btn-cambiar-fondo {
@@ -76,17 +79,39 @@
         .btn-cambiar-fondo:hover {
             background: #e0e0e0;
         }
+
+        /* 🌙 DETECTOR DE MODO OSCURO DE NOTION/SISTEMA */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #191919; /* Color exacto del fondo de Notion Oscuro */
+            }
+            .texto-editable {
+                background: rgba(25, 25, 25, 0.85); /* Fondo oscuro translúcido para que se vea el diseño de atrás */
+                color: #FFE4E1; /* Texto rosita claro legible */
+                border: 1px solid rgba(255, 105, 180, 0.3);
+            }
+            .redes a, .btn-cambiar-fondo {
+                background: #252525;
+                color: #ff85c2;
+                box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+            }
+            .btn-cambiar-fondo {
+                color: #ccc;
+            }
+            .btn-cambiar-fondo:hover {
+                background: #333;
+            }
+        }
     </style>
 </head>
 <body>
 
-    <!-- 2. AQUÍ VA TU ESTRUCTURA HTML (Actualizado para el Pack Moon) -->
+    <!-- 2. ESTRUCTURA HTML -->
     <div class="callout-gyaru" id="contenedorCallout">
         
         <!-- El cuadro editable para escribir -->
         <div class="texto-editable" contenteditable="true" id="miTexto">
-            🎀 <b>¡Bienvenida/o a tu Moon Hub!</b> 💘<br><br>
-            ¡Hola, preciosa! Soy Lucy, creadora de Cosmora. Oficialmente diste el primer paso para conectar con tu mejor versión. Diseñé este espacio extendido para que no solo organices tu belleza, sino para que transformes tus hábitos y brilles desde adentro hacia afuera de la forma más linda y <i>aesthetic</i> posible. ¡A romperla con ese Glow-Up! ⚡💅
+            <!-- El contenido inicial se genera dinámicamente con JavaScript abajo -->
         </div>
         
         <!-- Contenedor para los botones inferiores -->
@@ -104,18 +129,57 @@
         </div>
     </div>
 
-    <!-- 3. AQUÍ VA TU LÓGICA JAVASCRIPT (Ya arreglada y sin errores) -->
+    <!-- 3. LÓGICA JAVASCRIPT CON MEMORIA Y SALUDO DINÁMICO -->
     <script>
         window.addEventListener('DOMContentLoaded', () => {
             const botonSubir = document.getElementById('subirFondo');
             const contenedor = document.getElementById('contenedorCallout');
+            const cajaTexto = document.getElementById('miTexto');
 
+            // 1. Cargar fondo guardado al iniciar la página
+            const fondoGuardado = localStorage.getItem('cosmora_fondo');
+            if (fondoGuardado && contenedor) {
+                contenedor.style.setProperty('background-image', `url('${fondoGuardado}')`, 'important');
+            }
+
+            // 2. Lógica del Saludo Dinámico según la hora
+            const textoGuardado = localStorage.getItem('cosmora_texto');
+            
+            if (textoGuardado && textoGuardado.trim() !== "") {
+                // Si el usuario ya editó y guardó algo personalizado, mostramos eso
+                cajaTexto.innerHTML = textoGuardado;
+            } else {
+                // Si está vacío, generamos el saludo dinámico por defecto
+                const horaActual = new Date().getHours();
+                let saludoEstetico = "";
+
+                if (horaActual >= 6 && horaActual < 13) {
+                    // Mañana
+                    saludoEstetico = `🎀 <b>¡Buen día, preciosa!</b> 🌸<br><br>Hora de arrancar con toda la energía y tu rutina de mañana. Diseñé este espacio extendido para que no solo organices tu belleza, sino para que transformes tus hábitos y brilles desde adentro hacia afuera de la forma más linda posible. ¡A romperla hoy con ese Glow-Up! ⚡💅`;
+                } else if (horaActual >= 13 && horaActual < 20) {
+                    // Tarde
+                    saludoEstetico = `🎀 <b>¡Buenas tardes, reina!</b> 💘<br><br>A seguir brillando y rompiéndola con ese Glow-Up en esta segunda mitad del día. Diseñé este espacio extendido para que no solo organices tu belleza, sino para que transformes tus hábitos de la forma más linda y <i>aesthetic</i> posible. ¡Vos podés con todo! ⚡💅`;
+                } else {
+                    // Noche
+                    saludoEstetico = `🎀 <b>¡Buenas noches, linda!</b> 🌙<br><br>Momento de relajar, agradecer y hacer tu skincare nocturno para descansar como te merecés. Diseñé este espacio extendido para que no solo organices tu belleza, sino para que transformes tus hábitos y brilles desde adentro hacia afuera. Que descanses, preciosa. ✨💅`;
+                }
+
+                cajaTexto.innerHTML = saludoEstetico;
+            }
+
+            // 3. Guardar el texto automáticamente cada vez que el usuario escriba algo
+            if (cajaTexto) {
+                cajaTexto.addEventListener('input', () => {
+                    localStorage.setItem('cosmora_texto', cajaTexto.innerHTML);
+                });
+            }
+
+            // 4. Guardar el fondo cuando subas uno nuevo
             if (botonSubir && contenedor) {
                 botonSubir.addEventListener('change', function(e) {
                     const archivo = e.target.files[0];
                     
                     if (archivo) {
-                        // Validación para asegurarse de que sea una foto
                         if (!archivo.type.startsWith('image/')) {
                             alert('Por favor, selecciona un archivo de imagen válido (.jpg, .png, .gif)');
                             return;
@@ -123,16 +187,21 @@
 
                         const lector = new FileReader();
                         lector.onload = function(event) {
-                            // Aplicamos el fondo con prioridad alta para integrarse fluido
-                            contenedor.style.setProperty('background-image', `url('${event.target.result}')`, 'important');
-                            console.log("¡Fondo de Cosmora cambiado con éxito!");
+                            const resultadoBase64 = event.target.result;
+                            
+                            contenedor.style.setProperty('background-image', `url('${resultadoBase64}')`, 'important');
+                            
+                            try {
+                                localStorage.setItem('cosmora_fondo', resultadoBase64);
+                                console.log("¡Fondo de Cosmora guardado en memoria con éxito!");
+                            } catch (error) {
+                                console.warn("La imagen es muy pesada para la memoria rápida. Se aplicó, pero si se reinicia intenta con una imagen de menor resolución.");
+                            }
                         };
                         
                         lector.readAsDataURL(archivo);
                     }
                 });
-            } else {
-                console.error("No se encontraron los elementos en el HTML. Revisa los IDs.");
             }
         });
     </script>
